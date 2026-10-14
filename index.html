@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meine Aufgaben</title>
+<style>
+  :root {
+    --bg: #f4f5f7; --card: #ffffff; --text: #1d1f23; --muted: #6b7280;
+    --accent: #2563eb; --border: #e5e7eb; --done: #9ca3af;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111318; --card: #1b1e25; --text: #e8eaed; --muted: #9aa0a6;
+      --accent: #60a5fa; --border: #2c313a; --done: #6b7280;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 16px; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main {
+    max-width: 520px; margin: 0 auto; background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+  }
+  h1 { margin: 0 0 16px; font-size: 1.5rem; }
+  form { display: flex; gap: 8px; }
+  input[type=text] {
+    flex: 1; min-width: 0; padding: 10px 12px; font: inherit; color: inherit;
+    background: transparent; border: 1px solid var(--border); border-radius: 8px;
+  }
+  button {
+    font: inherit; cursor: pointer; border-radius: 8px; border: 0;
+    padding: 10px 16px; background: var(--accent); color: #fff;
+  }
+  ul { list-style: none; margin: 20px 0 0; padding: 0; }
+  li {
+    display: flex; align-items: center; gap: 10px; padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  li span { flex: 1; word-break: break-word; }
+  li.done span { text-decoration: line-through; color: var(--done); }
+  li input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .delete {
+    background: transparent; color: var(--muted); padding: 4px 8px; font-size: 1.1rem;
+  }
+  .delete:hover { color: #dc2626; }
+  footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 16px; color: var(--muted); font-size: 0.9rem;
+  }
+  .link { background: transparent; color: var(--accent); padding: 0; }
+  .empty { color: var(--muted); text-align: center; padding: 24px 0 8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Meine Aufgaben</h1>
+  <form id="form">
+    <input id="input" type="text" placeholder="Neue Aufgabe …" autocomplete="off" autofocus>
+    <button type="submit">Hinzufügen</button>
+  </form>
+  <ul id="list"></ul>
+  <p id="empty" class="empty">Noch keine Aufgaben. Leg oben los!</p>
+  <footer>
+    <span id="count"></span>
+    <button id="clear" class="link" type="button">Erledigte löschen</button>
+  </footer>
+</main>
+
+<script>
+  const KEY = "meine-aufgaben";
+  let tasks = load();
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(tasks)); } catch {}
+  }
+
+  function render() {
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+    tasks.forEach((task, i) => {
+      const li = document.createElement("li");
+      if (task.done) li.className = "done";
+
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = task.done;
+      box.onchange = () => { task.done = box.checked; update(); };
+
+      const text = document.createElement("span");
+      text.textContent = task.text;
+
+      const del = document.createElement("button");
+      del.className = "delete";
+      del.title = "Löschen";
+      del.textContent = "✕";
+      del.onclick = () => { tasks.splice(i, 1); update(); };
+
+      li.append(box, text, del);
+      list.append(li);
+    });
+    const open = tasks.filter(t => !t.done).length;
+    document.getElementById("count").textContent = `${open} offen von ${tasks.length}`;
+    document.getElementById("empty").hidden = tasks.length > 0;
+  }
+
+  function update() { save(); render(); }
+
+  document.getElementById("form").onsubmit = e => {
+    e.preventDefault();
+    const input = document.getElementById("input");
+    const text = input.value.trim();
+    if (text) { tasks.push({ text, done: false }); input.value = ""; update(); }
+  };
+  document.getElementById("clear").onclick = () => {
+    tasks = tasks.filter(t => !t.done);
+    update();
+  };
+
+  render();
+</script>
+</body>
+</html>
