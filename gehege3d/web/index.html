@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gehege 3D</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='12' width='26' height='14' rx='2' fill='%23c9a676'/><rect x='6' y='6' width='12' height='8' rx='1' fill='%23a8774a'/></svg>">
+<style>
+  :root {
+    --bg: #eef1f5; --panel: #ffffff; --text: #1d2430; --muted: #687385;
+    --border: #dde2ea; --accent: #2f6fdf; --accent-soft: #e5eefc;
+    --warn: #b45309; --warn-soft: #fef3c7; --danger: #c2410c;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font: 14px/1.4 "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--text); background: var(--bg);
+    display: grid; grid-template-rows: auto 1fr; grid-template-columns: 1fr 360px;
+    grid-template-areas: "top top" "view side"; overflow: hidden;
+  }
+  header {
+    grid-area: top; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 8px 14px; background: var(--panel); border-bottom: 1px solid var(--border);
+  }
+  header input.title {
+    font: 600 17px/1.2 inherit; font-family: inherit; border: 1px solid transparent;
+    background: transparent; padding: 4px 6px; border-radius: 6px; min-width: 260px; color: var(--text);
+  }
+  header input.title:hover, header input.title:focus { border-color: var(--border); outline: none; }
+  .stats { color: var(--muted); font-size: 13px; }
+  .stats b { color: var(--text); font-weight: 600; }
+  .spacer { flex: 1; }
+  .status { font-size: 12px; color: var(--muted); min-width: 90px; text-align: right; }
+  button, select, input { font: inherit; color: inherit; }
+  button {
+    border: 1px solid var(--border); background: var(--panel); border-radius: 7px;
+    padding: 5px 11px; cursor: pointer; white-space: nowrap;
+  }
+  button:hover { border-color: #b8c2d2; background: #f7f9fc; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { background: #2861c7; }
+  button.danger { color: var(--danger); }
+  button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .group { display: flex; gap: 4px; }
+
+  #view { grid-area: view; position: relative; min-width: 0; min-height: 0; }
+  #view canvas { display: block; }
+  #labels { position: absolute; inset: 0; pointer-events: none; }
+  .dim {
+    font: 600 12px/1 "Segoe UI", system-ui, sans-serif; padding: 3px 6px; border-radius: 5px;
+    background: #fff; color: #1f4fb3; border: 1px solid #9db8ee; white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+  }
+  .dim.y { color: #9a3412; border-color: #f0b48f; }
+  .dim.z { color: #166534; border-color: #94d3a8; }
+  .dim.small { font-size: 10px; padding: 2px 4px; opacity: .9; }
+  #tip {
+    position: absolute; pointer-events: none; display: none; z-index: 5;
+    background: rgba(20,26,36,.9); color: #fff; padding: 5px 8px; border-radius: 6px; font-size: 12px;
+    max-width: 280px;
+  }
+  #tip small { color: #c3cbd8; display: block; }
+  .viewbar { position: absolute; left: 12px; top: 12px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .viewbar button { background: rgba(255,255,255,.92); }
+  .hint {
+    position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--muted);
+    background: rgba(255,255,255,.85); padding: 4px 8px; border-radius: 6px;
+  }
+
+  aside {
+    grid-area: side; background: var(--panel); border-left: 1px solid var(--border);
+    overflow-y: auto; display: flex; flex-direction: column;
+  }
+  section { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 8px; }
+  h3 { font-size: 16px; margin: 0 0 2px; }
+  .list { list-style: none; margin: 0; padding: 0; max-height: 210px; overflow-y: auto; }
+  .list li {
+    display: flex; align-items: center; gap: 8px; padding: 5px 7px; border-radius: 6px; cursor: pointer;
+  }
+  .list li:hover { background: #f3f6fa; }
+  .list li.sel { background: var(--accent-soft); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; border: 1px solid rgba(0,0,0,.15); }
+  .list .meta { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .addrow { display: flex; gap: 6px; margin-top: 8px; }
+  .addrow select { flex: 1; min-width: 0; }
+  select, input[type=number], input[type=text] {
+    border: 1px solid var(--border); border-radius: 6px; padding: 5px 7px; background: #fff; width: 100%;
+  }
+  input[type=color] { width: 100%; height: 30px; border: 1px solid var(--border); border-radius: 6px; padding: 2px; background: #fff; }
+  .form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+  .form label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
+  .form label.full { grid-column: 1 / -1; }
+  .sub { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+  .actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 4px 5px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tr.hl td { background: #fff4c2; }
+  .bigdims { display: flex; gap: 6px; margin: 8px 0 10px; flex-wrap: wrap; }
+  .bigdims span { border-radius: 6px; padding: 4px 8px; font-weight: 600; font-size: 13px; background: #eef3fd; color: #1f4fb3; }
+  .bigdims span.y { background: #fdf0e7; color: #9a3412; }
+  .bigdims span.z { background: #eaf7ee; color: #166534; }
+  .info { font-size: 13px; margin: 6px 0 0; padding-left: 18px; }
+  .warn { background: var(--warn-soft); color: var(--warn); padding: 6px 9px; border-radius: 6px; font-size: 13px; margin-top: 8px; }
+  .empty { color: var(--muted); }
+
+  dialog { border: none; border-radius: 12px; padding: 0; width: min(900px, 94vw); max-height: 88vh; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  dialog::backdrop { background: rgba(15,20,30,.45); }
+  .dlg-head { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; }
+  .dlg-head h2 { margin: 0; font-size: 16px; text-transform: none; letter-spacing: 0; color: var(--text); flex: 1; }
+  .dlg-body { padding: 12px 16px 18px; overflow-y: auto; }
+  .dlg-body h4 { margin: 16px 0 4px; font-size: 14px; }
+  .dlg-body h4:first-child { margin-top: 0; }
+
+  @media print {
+    body > *:not(dialog) { display: none !important; }
+    body { display: block; overflow: visible; background: #fff; }
+    dialog { position: static; box-shadow: none; width: 100%; max-height: none; display: block; }
+    .dlg-head button { display: none; }
+  }
+</style>
+<script type="importmap">
+  { "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<header>
+  <input class="title" id="layoutName" aria-label="Name des Geheges">
+  <span class="stats" id="stats"></span>
+  <span class="spacer"></span>
+  <span class="status" id="status"></span>
+  <button id="btnParts" class="primary">Stückliste</button>
+  <button id="btnExport">Exportieren</button>
+  <button id="btnImport">Importieren</button>
+  <button id="btnReset" class="danger">Beispiel laden</button>
+  <input type="file" id="fileImport" accept=".json,application/json" hidden>
+</header>
+
+<main id="view">
+  <div id="labels"></div>
+  <div id="tip"></div>
+  <div class="viewbar">
+    <button data-view="3d">3D</button>
+    <button data-view="top">Von oben</button>
+    <button data-view="front">Von vorne</button>
+    <button data-view="side">Von der Seite</button>
+    <button id="btnFocus">Auswahl zeigen</button>
+    <button id="btnAllDims">Alle Maße</button>
+  </div>
+  <div class="hint">Klick auf ein Teil: Maße anzeigen · Linke Maustaste ziehen: drehen · Rechte Maustaste: verschieben · Mausrad: zoomen</div>
+</main>
+
+<aside>
+  <section>
+    <h2>Teile</h2>
+    <ul class="list" id="pieceList"></ul>
+    <div class="addrow">
+      <select id="newType" aria-label="Art des neuen Teils"></select>
+      <button id="btnAdd">+ Hinzufügen</button>
+    </div>
+  </section>
+  <section id="detail"></section>
+</aside>
+
+<dialog id="partsDlg">
+  <div class="dlg-head">
+    <h2>Stückliste und Zuschnitt</h2>
+    <button id="btnCsv">Als CSV speichern</button>
+    <button id="btnPrint">Drucken</button>
+    <button id="btnClose">Schließen</button>
+  </div>
+  <div class="dlg-body" id="partsBody"></div>
+</dialog>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

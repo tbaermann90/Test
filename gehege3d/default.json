@@ -1,0 +1,21 @@
+{
+  "name": "Mein Meerschweinchengehege",
+  "pieces": [
+    { "id": "p1", "name": "Grundmodul links", "typ": "modul", "x": 0, "y": 0, "z": 0, "rot": 0,
+      "w": 120, "d": 60, "h": 35, "t": 1.8, "front": "plexi", "links": "wand", "rechts": "durchgang",
+      "durchB": 20, "durchH": 16, "farbe": "#d9b98c", "notiz": "Siebdruckplatte, Boden mit Teichfolie auslegen" },
+    { "id": "p2", "name": "Grundmodul rechts", "typ": "modul", "x": 120, "y": 0, "z": 0, "rot": 0,
+      "w": 120, "d": 60, "h": 35, "t": 1.8, "front": "plexi", "links": "durchgang", "rechts": "wand",
+      "durchB": 20, "durchH": 16, "farbe": "#d9b98c", "notiz": "" },
+    { "id": "p3", "name": "Etage", "typ": "platte", "x": 130, "y": 22, "z": 1.8, "rot": 0,
+      "w": 55, "d": 35, "t": 1.8, "stuetzen": 20.2, "rand": 6, "farbe": "#c9a676", "notiz": "" },
+    { "id": "p4", "name": "Rampe zur Etage", "typ": "rampe", "x": 185, "y": 1.8, "z": 1.8, "rot": 180,
+      "w": 50, "d": 20, "h": 22, "t": 1.2, "sprossen": 7, "seiten": 4, "farbe": "#b98f5c", "notiz": "" },
+    { "id": "p5", "name": "Häuschen", "typ": "haus", "x": 8, "y": 1.8, "z": 6, "rot": 0,
+      "w": 40, "d": 28, "h": 22, "t": 1.2, "tuerB": 12, "tuerH": 13, "eingaenge": 2, "farbe": "#a8774a", "notiz": "Ohne Boden, Dach abnehmbar" },
+    { "id": "p6", "name": "Heuraufe", "typ": "block", "x": 60, "y": 1.8, "z": 1.8, "rot": 0,
+      "w": 30, "d": 12, "h": 25, "farbe": "#7aa35a", "notiz": "" },
+    { "id": "p7", "name": "Wassernapf", "typ": "block", "x": 95, "y": 1.8, "z": 35, "rot": 0,
+      "w": 15, "d": 15, "h": 6, "farbe": "#6b9bd1", "notiz": "" }
+  ]
+}

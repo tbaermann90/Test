@@ -16,3 +16,8 @@ Das war's.
 - Alle erledigten Aufgaben auf einmal entfernen
 - Die Aufgaben bleiben gespeichert, auch wenn du den Browser schließt
 - Heller und dunkler Modus, je nach Systemeinstellung
+
+## Außerdem: Gehege 3D
+
+Im Ordner [`gehege3d`](gehege3d/README.md) liegt ein 3D-Planer für modulare
+Meerschweinchengehege. Die fertige Windows-Datei ist [`dist/Gehege3D.exe`](dist/Gehege3D.exe).
