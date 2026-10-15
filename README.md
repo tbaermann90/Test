@@ -1,3 +1,8 @@
+# Projekte
+
+- **[Baumarkt-Preisvergleich](baumarkt-preisvergleich/)**: Baumärkte speichern, Produkt-Links mit Menge erfassen, günstigste Variante mit und ohne Versand finden, Preisalarme.
+- **Meine Aufgaben** (`index.html`): siehe unten.
+
 # Meine Aufgaben
 
 Eine kleine To-do-Liste, die direkt im Browser läuft. Du musst nichts installieren.

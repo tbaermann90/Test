@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baumarkt-Preisvergleich</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔨</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo">🔨</span> Baumarkt-Preisvergleich</div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="liste">Einkaufsliste</button>
+    <button class="tab" data-view="maerkte">Märkte</button>
+    <button class="tab" data-view="einstellungen">Einstellungen</button>
+  </nav>
+  <div class="top-actions">
+    <button class="btn ghost" id="btn-check" title="Alle Preise jetzt im Internet prüfen">↻ Preise prüfen</button>
+    <button class="bell" id="btn-bell" title="Benachrichtigungen" aria-label="Benachrichtigungen">
+      🔔<span class="badge" id="bell-badge" hidden>0</span>
+    </button>
+  </div>
+  <div class="notif-panel" id="notif-panel" hidden>
+    <div class="notif-head">
+      <strong>Benachrichtigungen</strong>
+      <button class="link" id="btn-clear-notif">Alle löschen</button>
+    </div>
+    <ul id="notif-list"></ul>
+  </div>
+</header>
+
+<main>
+  <section id="view-liste" class="view"></section>
+  <section id="view-maerkte" class="view" hidden></section>
+  <section id="view-einstellungen" class="view" hidden></section>
+</main>
+
+<dialog id="modal">
+  <form method="dialog" class="modal-box" id="modal-form">
+    <div class="modal-head">
+      <h2 id="modal-title"></h2>
+      <button type="button" class="close" id="modal-close" aria-label="Schließen">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
