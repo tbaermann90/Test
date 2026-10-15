@@ -1,3 +1,5 @@
 daten.json
 daten.json.tmp
 __pycache__/
+build/
+dist/

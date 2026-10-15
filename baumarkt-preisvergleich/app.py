@@ -22,9 +22,15 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import pricing
 import scraper
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FROZEN = getattr(sys, "frozen", False)  # True in der .exe
+BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
-DATA_FILE = os.environ.get("BAUMARKT_DATEN", os.path.join(BASE_DIR, "daten.json"))
+if FROZEN:
+    DATA_DIR = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"),
+                            "Baumarkt-Preisvergleich")
+else:
+    DATA_DIR = BASE_DIR
+DATA_FILE = os.environ.get("BAUMARKT_DATEN", os.path.join(DATA_DIR, "daten.json"))
 HOST = os.environ.get("BAUMARKT_HOST", "127.0.0.1")
 PORT = int(os.environ.get("BAUMARKT_PORT", "8765"))
 
@@ -85,9 +91,15 @@ class Store:
 
 
 db = None
+notify_hooks = []  # z. B. Windows-Benachrichtigung aus desktop.py
 
 
 def notify(kind, text, product_id=None):
+    for hook in notify_hooks:
+        try:
+            hook(text)
+        except Exception:  # noqa: BLE001
+            pass
     db.data["notifications"].insert(0, {
         "id": new_id(), "kind": kind, "text": text, "product_id": product_id,
         "created": now_iso(), "read": False,
@@ -629,13 +641,19 @@ def add_offer(body):
     return None
 
 
-def main():
+def start_server():
+    """Startet Datenhaltung, Preisprüfung und Webserver. Gibt (server, url) zurück."""
     global db
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     db = Store(DATA_FILE)
     db.save()
-    threading.Thread(target=background_checker, daemon=True).start()
     server = ThreadingHTTPServer((HOST, PORT), Handler)
-    url = f"http://{HOST}:{PORT}"
+    threading.Thread(target=background_checker, daemon=True).start()
+    return server, f"http://{HOST}:{PORT}"
+
+
+def main():
+    server, url = start_server()
     print(f"Baumarkt-Preisvergleich läuft auf {url}  (Beenden mit Strg+C)")
     if "--kein-browser" not in sys.argv:
         threading.Timer(0.8, lambda: webbrowser.open(url)).start()

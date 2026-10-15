@@ -1,6 +1,6 @@
 # Projekte
 
-- **[Baumarkt-Preisvergleich](baumarkt-preisvergleich/)**: Baumärkte speichern, Produkt-Links mit Menge erfassen, günstigste Variante mit und ohne Versand finden, Preisalarme.
+- **[Baumarkt-Preisvergleich](baumarkt-preisvergleich/)** ([Windows-Download](https://github.com/tbaermann90/Test/releases/tag/baumarkt-aktuell)): Baumärkte speichern, Produkt-Links mit Menge erfassen, günstigste Variante mit und ohne Versand finden, Preisalarme.
 - **Meine Aufgaben** (`index.html`): siehe unten.
 
 # Meine Aufgaben

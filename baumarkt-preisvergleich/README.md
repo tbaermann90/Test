@@ -3,15 +3,38 @@
 Speichere deine Baumärkte und Onlineshops, füge Produkt-Links mit Menge hinzu und
 sieh auf einen Blick, wo du am günstigsten einkaufst: vor Ort oder mit Lieferung.
 
-## Starten
+## Starten (Windows)
 
-Voraussetzung: [Python 3.9 oder neuer](https://www.python.org/downloads/). Weitere Pakete braucht es nicht.
+1. **[Baumarkt-Preisvergleich.exe herunterladen](https://github.com/tbaermann90/Test/releases/tag/baumarkt-aktuell)**
+   (unter „Assets“ auf die .exe klicken).
+2. Doppelklick auf die heruntergeladene Datei. Keine Installation nötig.
+3. Beim ersten Start zeigt Windows eventuell **„Der Computer wurde durch Windows geschützt“**.
+   Das kommt bei allen Programmen ohne gekauftes Herausgeber-Zertifikat. Auf
+   **„Weitere Informationen“** und dann **„Trotzdem ausführen“** klicken.
 
-- **Windows:** Doppelklick auf `Starten (Windows).bat`
-- **Mac / Linux:** im Terminal `./starten.sh` (oder `python3 app.py`)
+Die Oberfläche öffnet sich im Browser. Das Programm läuft danach mit einem
+orangen Preisschild-Symbol **unten rechts neben der Uhr** weiter (eventuell
+unter dem kleinen Pfeil ^). Dort kannst du per Rechtsklick:
 
-Der Browser öffnet sich automatisch unter <http://127.0.0.1:8765>.
-Das Programm läuft, solange das Fenster offen ist. Alle Daten liegen in `daten.json`.
+- **Öffnen**: Oberfläche wieder anzeigen (oder Doppelklick auf das Symbol)
+- **Preise jetzt prüfen**
+- **Mit Windows starten**: Preise werden dann ab dem Hochfahren geprüft und
+  Angebote als Windows-Benachrichtigung gemeldet
+- **Beenden**
+
+Deine Daten liegen in `%APPDATA%\Baumarkt-Preisvergleich\daten.json` und
+bleiben erhalten, wenn du eine neue Version der .exe herunterlädst.
+
+<details><summary>Für Entwickler: ohne .exe starten oder selbst bauen</summary>
+
+- Direkt mit Python 3.9+: `python3 app.py` (Mac/Linux auch `./starten.sh`).
+  Daten liegen dann in `daten.json` neben dem Skript.
+- Die .exe wird automatisch von GitHub Actions gebaut
+  (`.github/workflows/baumarkt-exe.yml`), sobald sich etwas in diesem Ordner ändert.
+- Selbst bauen unter Windows: `pip install pyinstaller pystray pillow`, dann
+  `pyinstaller --noconfirm Baumarkt-Preisvergleich.spec`. Die .exe liegt in `dist\`.
+
+</details>
 
 ## So funktioniert's
 
@@ -48,7 +71,8 @@ angezeigt, samt Hinweis, wie viel du dadurch sparst.
 - 🔔 Du wirst informiert, wenn ein Preis sinkt (Angebot), ein anderer Markt
   zum Bestpreis wird oder dein **Wunschpreis** erreicht ist.
 - Mit „Desktop-Benachrichtigungen erlauben“ (Einstellungen) kommen die Meldungen
-  auch als Systembenachrichtigung, solange die Seite offen ist.
+  auch als Systembenachrichtigung, solange die Seite offen ist. Die .exe meldet
+  Angebote zusätzlich als Windows-Benachrichtigung, auch bei geschlossenem Browser.
 
 ### Im Internet vergleichen
 

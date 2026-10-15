@@ -1,0 +1,63 @@
+name: Baumarkt-Preisvergleich.exe bauen
+
+on:
+  push:
+    paths:
+      - "baumarkt-preisvergleich/**"
+      - ".github/workflows/baumarkt-exe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: baumarkt-preisvergleich
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Werkzeuge installieren
+        run: python -m pip install pyinstaller==6.11.1 pystray==0.19.5 pillow==11.0.0
+
+      - name: Tests
+        run: python -m unittest discover -s tests -v
+
+      - name: .exe bauen
+        run: pyinstaller --noconfirm Baumarkt-Preisvergleich.spec
+
+      - name: .exe testen
+        shell: pwsh
+        run: |
+          $env:BAUMARKT_DATEN = "$env:RUNNER_TEMP\test-daten.json"
+          $env:BAUMARKT_PORT = "8790"
+          $p = Start-Process -FilePath "dist\Baumarkt-Preisvergleich.exe" -ArgumentList "--selbsttest" -Wait -PassThru
+          Get-Content "$env:APPDATA\Baumarkt-Preisvergleich\protokoll.txt" -ErrorAction SilentlyContinue
+          if ($p.ExitCode -ne 0) { throw "Selbsttest fehlgeschlagen (Exit-Code $($p.ExitCode))" }
+          (Get-Item "dist\Baumarkt-Preisvergleich.exe").Length / 1MB
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Baumarkt-Preisvergleich
+          path: baumarkt-preisvergleich/dist/Baumarkt-Preisvergleich.exe
+
+      - name: Als Download veröffentlichen
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete baumarkt-aktuell --yes --cleanup-tag || true
+          gh release create baumarkt-aktuell dist/Baumarkt-Preisvergleich.exe \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Baumarkt-Preisvergleich für Windows" \
+            --notes "Baumarkt-Preisvergleich.exe herunterladen und doppelklicken. Keine Installation nötig.
+
+          Beim ersten Start zeigt Windows eventuell „Der Computer wurde durch Windows geschützt“. Dann auf „Weitere Informationen“ und „Trotzdem ausführen“ klicken.
+
+          Gebaut aus Commit $GITHUB_SHA."
