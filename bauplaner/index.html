@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holz-Bauplaner</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="kopf">
+  <div class="logo">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="6" rx="1.5" fill="#d9a865" stroke="#5b3d1c" stroke-width="1.5"/><rect x="6" y="15" width="4" height="13" fill="#c48a4c" stroke="#5b3d1c" stroke-width="1.5"/><rect x="22" y="15" width="4" height="13" fill="#c48a4c" stroke="#5b3d1c" stroke-width="1.5"/><path d="M5 5h22" stroke="#b5651d" stroke-width="2" stroke-linecap="round"/></svg>
+    Holz-Bauplaner
+  </div>
+  <button class="zweit" id="knopfNeu" type="button">Neu</button>
+  <button class="zweit" id="knopfProjekte" type="button">Meine Projekte</button>
+  <button class="zweit" id="knopfEinstellungen" type="button" aria-label="Einstellungen">⚙︎</button>
+</header>
+
+<main>
+  <section id="eingabe" class="karte">
+    <h2>Was möchtest du bauen?</h2>
+    <p class="muted">Gib ein YouTube-Video, Fotos, Links oder einfach eine Beschreibung an. Die App erstellt daraus einen Bauplan mit Zeichnungen, Zuschnitt, Einkaufsliste mit Preisen und Tipps zum Verschönern.</p>
+
+    <label for="beschreibung">Beschreibung <span class="muted">(was, wofür, Stil)</span></label>
+    <textarea id="beschreibung" rows="3" placeholder="z. B. Ein Wandregal für Gewürze mit 3 Böden, Eiche-Optik. Oder: Eine Bohrlehre für Regalbodenträger (32-mm-Raster)."></textarea>
+
+    <label for="youtube">YouTube-Videos <span class="muted">(ein Link pro Zeile)</span></label>
+    <textarea id="youtube" rows="2" placeholder="https://www.youtube.com/watch?v=…"></textarea>
+    <div class="vorschau" id="ytVorschau"></div>
+
+    <label>Bilder <span class="muted">(Fotos, Skizzen, Screenshots aus dem Video)</span></label>
+    <div class="ablage" id="ablage" tabindex="0" role="button">
+      Bilder hierher ziehen oder <u>klicken zum Auswählen</u><br>
+      <span class="klein">Tipp: Screenshots von wichtigen Momenten im Video verbessern das Ergebnis stark.</span>
+    </div>
+    <input type="file" id="dateien" accept="image/*" multiple hidden>
+    <div class="vorschau" id="bildVorschau"></div>
+
+    <details>
+      <summary style="cursor:pointer;margin-top:16px;font-weight:600">Weitere Angaben (optional)</summary>
+      <label for="links">Andere Links <span class="muted">(Blogs, Pinterest, Shops – einer pro Zeile)</span></label>
+      <textarea id="links" rows="2"></textarea>
+      <label for="zusatz">Videobeschreibung, Transkript oder Notizen</label>
+      <textarea id="zusatz" rows="3" placeholder="Hier kannst du z. B. die Videobeschreibung oder genannte Maße einfügen."></textarea>
+    </details>
+
+    <label>Wunschmaße in mm <span class="muted">(leer = Vorschlag der App)</span></label>
+    <div class="masse">
+      <input type="number" id="mBreite" min="0" placeholder="Breite">
+      <input type="number" id="mTiefe" min="0" placeholder="Tiefe">
+      <input type="number" id="mHoehe" min="0" placeholder="Höhe">
+    </div>
+
+    <div class="raster">
+      <div>
+        <label for="markt">Baumarkt für Preise</label>
+        <select id="markt">
+          <option>OBI</option><option>Hornbach</option><option>Bauhaus</option><option>toom</option>
+          <option>hagebaumarkt</option><option>Globus Baumarkt</option><option>Hellweg</option>
+          <option>B1 Discount Baumarkt</option><option>Bauking</option><option value="andere">Anderer …</option>
+        </select>
+        <input type="text" id="marktAnders" class="versteckt" placeholder="Name des Baumarkts" style="margin-top:8px">
+      </div>
+      <div>
+        <label for="plz">Postleitzahl <span class="muted">(optional)</span></label>
+        <input type="text" id="plz" inputmode="numeric" maxlength="5" placeholder="z. B. 50667">
+      </div>
+      <div>
+        <label for="erfahrung">Deine Erfahrung</label>
+        <select id="erfahrung">
+          <option>Anfänger</option><option>Etwas Erfahrung</option><option>Fortgeschritten</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Welches Werkzeug hast du?</label>
+    <div class="chips" id="werkzeug">
+      <label class="chip"><input type="checkbox" value="Akkuschrauber" checked>Akkuschrauber</label>
+      <label class="chip"><input type="checkbox" value="Stichsäge">Stichsäge</label>
+      <label class="chip"><input type="checkbox" value="Handkreissäge">Handkreissäge</label>
+      <label class="chip"><input type="checkbox" value="Tauchsäge mit Schiene">Tauchsäge</label>
+      <label class="chip"><input type="checkbox" value="Kappsäge">Kappsäge</label>
+      <label class="chip"><input type="checkbox" value="Tischkreissäge">Tischkreissäge</label>
+      <label class="chip"><input type="checkbox" value="Oberfräse">Oberfräse</label>
+      <label class="chip"><input type="checkbox" value="Exzenterschleifer">Schleifer</label>
+      <label class="chip"><input type="checkbox" value="Taschenlochbohrer (Pocket Hole Jig)">Taschenloch-Jig</label>
+      <label class="chip"><input type="checkbox" value="Dübelhilfe">Dübelhilfe</label>
+      <label class="chip"><input type="checkbox" value="Schraubzwingen" checked>Schraubzwingen</label>
+    </div>
+
+    <div class="aktionen">
+      <button class="gross" id="knopfErstellen" type="button">Bauplan erstellen</button>
+      <button class="zweit" id="knopfBeispiel" type="button">Beispiel ansehen</button>
+    </div>
+    <div class="fehler versteckt" id="fehler"></div>
+  </section>
+
+  <section id="fortschritt" class="karte fortschritt versteckt" aria-live="polite">
+    <h2 id="fortschrittTitel">Bauplan wird erstellt …</h2>
+    <p class="muted klein">Das dauert meist 2–6 Minuten: Quellen auswerten, Maße festlegen, Preise recherchieren, Plan zeichnen.</p>
+    <div class="balken"><div></div></div>
+    <ul class="protokoll" id="protokoll"></ul>
+    <div class="gedanken" id="gedanken"></div>
+    <div class="aktionen"><button class="zweit" id="knopfAbbrechen" type="button">Abbrechen</button></div>
+  </section>
+
+  <div id="ergebnis" class="versteckt"></div>
+</main>
+
+<dialog id="dlgEinstellungen">
+  <h2>Einstellungen</h2>
+  <p class="muted klein">Die App nutzt Claude von Anthropic. Dafür brauchst du einen eigenen API-Schlüssel von <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. Jeder Bauplan kostet je nach Umfang grob 0,30–1,50 €.</p>
+  <label for="apiKey">API-Schlüssel</label>
+  <input type="password" id="apiKey" placeholder="sk-ant-…" autocomplete="off">
+  <p class="muted klein">Der Schlüssel wird nur in diesem Browser gespeichert und direkt an Anthropic gesendet. Nutze die App nur auf deinem eigenen Gerät.</p>
+  <label for="modell">Modell</label>
+  <select id="modell">
+    <option value="claude-opus-5-5">Claude Opus 5.5 – beste Qualität (empfohlen)</option>
+    <option value="claude-sonnet-5-5">Claude Sonnet 5.5 – schneller und günstiger</option>
+  </select>
+  <div class="aktionen">
+    <button id="knopfSpeichern" type="button">Speichern</button>
+    <button class="zweit" id="knopfSchliessen" type="button">Abbrechen</button>
+  </div>
+</dialog>
+
+<dialog id="dlgProjekte">
+  <h2>Meine Projekte</h2>
+  <div id="projektListe"></div>
+  <div class="aktionen">
+    <button class="zweit" id="knopfImport" type="button">Plan-Datei öffnen …</button>
+    <input type="file" id="importDatei" accept=".json,application/json" hidden>
+    <button class="zweit" id="knopfProjekteZu" type="button">Schließen</button>
+  </div>
+</dialog>
+
+<script src="vendor/anthropic-sdk.js"></script>
+<script src="render.js"></script>
+<script src="ki.js"></script>
+<script src="beispiel.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

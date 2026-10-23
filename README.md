@@ -16,3 +16,11 @@ Das war's.
 - Alle erledigten Aufgaben auf einmal entfernen
 - Die Aufgaben bleiben gespeichert, auch wenn du den Browser schließt
 - Heller und dunkler Modus, je nach Systemeinstellung
+
+---
+
+# Holz-Bauplaner
+
+Im Ordner [`bauplaner`](bauplaner/) liegt eine zweite App. Sie erstellt aus YouTube-Videos, Bildern und Beschreibungen
+Baupläne für Holzprojekte, mit Zeichnungen, Zuschnittplan, Einkaufsliste mit Baumarkt-Preisen und Tipps zum Verschönern.
+Starten: `bauplaner/index.html` doppelklicken. Details stehen in [`bauplaner/README.md`](bauplaner/README.md).
