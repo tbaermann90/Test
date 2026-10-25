@@ -23,4 +23,4 @@ Das war's.
 
 Im Ordner [`bauplaner`](bauplaner/) liegt eine zweite App. Sie erstellt aus YouTube-Videos, Bildern und Beschreibungen
 Baupläne für Holzprojekte, mit Zeichnungen, Zuschnittplan, Einkaufsliste mit Baumarkt-Preisen und Tipps zum Verschönern.
-Starten: `bauplaner/index.html` doppelklicken. Details stehen in [`bauplaner/README.md`](bauplaner/README.md).
+Starten: unter Windows `download/Holz-Bauplaner.exe` doppelklicken, sonst `bauplaner/index.html` im Browser öffnen. Details stehen in [`bauplaner/README.md`](bauplaner/README.md).

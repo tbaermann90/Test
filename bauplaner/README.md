@@ -5,8 +5,15 @@ Erstellt aus YouTube-Videos, Fotos, Links oder einer Beschreibung einen Bauplan 
 
 ## Starten
 
+**Windows-Programm:** `download/Holz-Bauplaner.exe` herunterladen und doppelklicken. Die App öffnet sich in einem eigenen Fenster,
+eine Installation ist nicht nötig. Beim ersten Start warnt Windows eventuell („Der Computer wurde durch Windows geschützt“),
+weil das Programm nicht signiert ist. Klicke dann auf **Weitere Informationen → Trotzdem ausführen**.
+
+**Im Browser (alle Systeme):**
 1. Ordner `bauplaner` herunterladen (oder das Repository klonen).
-2. `bauplaner/index.html` doppelklicken. Die App läuft direkt im Browser, du musst nichts installieren.
+2. `bauplaner/index.html` doppelklicken.
+
+Danach:
 3. Oben rechts auf ⚙︎ klicken und deinen Anthropic-API-Schlüssel eintragen
    (bekommst du unter <https://console.anthropic.com/settings/keys>).
 
@@ -38,3 +45,7 @@ Mit **„Beispiel ansehen“** siehst du einen fertigen Plan, auch ohne API-Schl
 Reines HTML/JS ohne Build. `ki.js` ruft Claude (Opus 5.5) über das offizielle Anthropic-SDK auf
 (`vendor/anthropic-sdk.js`, gebündelt aus `@anthropic-ai/sdk` 0.133.0). Dabei nutzt es Websuche und Web-Fetch für Video-Infos und Preise.
 Der Bauplan kommt als strukturiertes JSON zurück. `render.js` zeichnet daraus alle Grafiken als SVG.
+
+Die Windows-Version (`desktop/`) ist ein kleines Go-Programm. Es liefert die App über einen lokalen Server (127.0.0.1)
+aus und zeigt sie in einem Microsoft-Edge-WebView2-Fenster, das in Windows 10/11 bereits enthalten ist. Projekte werden unter
+`%APPDATA%\Holz-Bauplaner` gespeichert. Neu bauen (unter Linux/macOS/Windows mit Go): `desktop/build.sh`.
